@@ -1,3 +1,4 @@
+from patchwork.db.connection import get_connection
 from patchwork.services import meaning_service
 
 
@@ -20,6 +21,18 @@ def test_replay_returns_saved_payload(client, monkeypatch):
     response = client.post("/api/v1/admin/replay", json={"ticket": "A-100"})
     assert response.status_code == 200
     assert response.json()["payload"]["meaning"]["ticket"] == "A-100"
+
+
+def test_transform_creates_db_rows(client, monkeypatch):
+    monkeypatch.setattr(meaning_service.CLIENT, "related_words", lambda term: [])
+    client.post("/api/v1/transform", json={"raw_text": RAW})
+    with get_connection() as conn:
+        run_count = conn.execute("select count(*) from transform_runs").fetchone()[0]
+        call_count = conn.execute("select count(*) from api_calls where path = '/api/v1/transform'").fetchone()[0]
+        flag = conn.execute("select decision_flag from run_flags").fetchone()[0]
+    assert run_count == 1
+    assert call_count == 1
+    assert flag == "STOP_AND_STARE"
 
 
 def test_missing_example_comes_back_404(client):

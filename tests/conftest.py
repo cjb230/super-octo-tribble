@@ -9,6 +9,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+os.environ["PATCHWORK_DB_PATH"] = os.path.join(ROOT, "test_patchwork.sqlite3")
+
 from app import app
 from patchwork.services.cache_box import clear_everything
 

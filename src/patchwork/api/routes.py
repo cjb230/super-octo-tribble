@@ -80,7 +80,9 @@ async def transform(request: Request):
         "meaning": meaning,
         "flags": flags,
     }
-    remember_result(final_doc)
+    stored = remember_result(final_doc, endpoint_name="transform")
+    request.state.run_id = stored.get("run_id")
+    request.state.ticket = envelope.ticket
     return final_doc
 
 
@@ -94,4 +96,15 @@ async def flag_only(request: Request):
     normalized = normalize_payload(parsed, payload)
     envelope = MessageEnvelope.from_parts(raw_text, normalized)
     meaning = shift_meaning(envelope.to_dict())
-    return {"ticket": envelope.ticket, "flags": build_flags(meaning)}
+    flags = build_flags(meaning)
+    stored = remember_result(
+        {
+            "input": envelope.to_dict(),
+            "meaning": meaning,
+            "flags": flags,
+        },
+        endpoint_name="flag-only",
+    )
+    request.state.run_id = stored.get("run_id")
+    request.state.ticket = envelope.ticket
+    return {"ticket": envelope.ticket, "flags": flags}

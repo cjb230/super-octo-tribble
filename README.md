@@ -13,6 +13,7 @@ FACTS:: amount=>1450 ;; retry=>yes ;; vip=>no
 It turns them into JSON after doing a bit of external meaning-shifting through Datamuse.
 
 The runtime is FastAPI now, although parts of the repo still look like they missed that meeting.
+It also writes call logs and transform records into a local SQLite database.
 
 ## Run
 
@@ -41,3 +42,5 @@ curl -s http://127.0.0.1:5001/api/v1/transform \
 ```
 
 It is supposed to feel like several people made several choices and then moved on.
+
+The default database file lands at `var/patchwork.sqlite3`.

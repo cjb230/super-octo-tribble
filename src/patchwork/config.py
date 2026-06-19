@@ -8,6 +8,7 @@ class AppConfig(object):
     DATAMUSE_URL = os.environ.get("DATAMUSE_URL", "https://api.datamuse.com/words")
     DEFAULT_PORT = int(os.environ.get("PORT", "5001"))
     APP_NAME = "patchwork-api"
+    DB_LABEL = "patchwork-sqlite"
 
 
 LEGACY_COMPAT_MAP = {

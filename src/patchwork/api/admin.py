@@ -3,6 +3,7 @@ import json
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from patchwork.db.repository import count_api_calls
 from patchwork.services.audit_service import get_last_for_ticket, known_tickets
 
 
@@ -11,7 +12,7 @@ admin_bp = APIRouter(prefix="/api/v1/admin")
 
 @admin_bp.get("/ping")
 def ping():
-    return {"pong": True, "tickets_seen": len(known_tickets())}
+    return {"pong": True, "tickets_seen": len(known_tickets()), "calls_logged": count_api_calls()}
 
 
 @admin_bp.post("/replay")
