@@ -19,7 +19,7 @@ day_offsets(day_offset) AS (
 slots(slot) AS (
     SELECT 1
     UNION ALL
-    SELECT slot + 1 FROM slots WHERE slot < 18
+    SELECT slot + 1 FROM slots WHERE slot < 20
 ),
 day_plan AS (
     SELECT
@@ -35,9 +35,9 @@ scheduled AS (
         weekday_num,
         slot,
         CASE
-            WHEN weekday_num BETWEEN 1 AND 5 THEN 18
-            WHEN weekday_num = 6 THEN 10
-            ELSE 7
+            WHEN weekday_num BETWEEN 1 AND 5 THEN 16 + ((day_offset * 2 + weekday_num) % 5)
+            WHEN weekday_num = 6 THEN 8 + ((day_offset * 5) % 4)
+            ELSE 5 + ((day_offset * 7) % 4)
         END AS daily_runs
     FROM day_plan
     CROSS JOIN slots
