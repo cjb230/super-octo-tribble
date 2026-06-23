@@ -7,7 +7,8 @@ DEFAULT_DB_PATH = os.path.join(BASE_DIR, "var", "patchwork.sqlite3")
 
 
 def get_db_path():
-    return os.environ.get("PATCHWORK_DB_PATH", DEFAULT_DB_PATH)
+    raw_path = os.environ.get("PATCHWORK_DB_PATH", DEFAULT_DB_PATH)
+    return os.path.abspath(os.path.expanduser(raw_path))
 
 
 def ensure_db_dir():

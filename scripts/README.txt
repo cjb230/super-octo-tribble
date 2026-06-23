@@ -1,4 +1,4 @@
-seed_light_usage.sql populates the SQLite database with a couple of weeks of light demo traffic.
+seed_data.sql populates the SQLite database with a couple of weeks of light demo traffic.
 
 Example:
 python - <<'PY'

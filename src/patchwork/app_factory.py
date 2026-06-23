@@ -5,12 +5,20 @@ from fastapi import FastAPI
 from patchwork.api.admin import admin_bp
 from patchwork.api.routes import api_bp
 from patchwork.config import AppConfig
+from patchwork.db.connection import get_db_path
 from patchwork.db.repository import record_api_call
 from patchwork.db.schema import initialize_database
 
 
+_DB_PATH_ANNOUNCED = False
+
+
 def create_app():
+    global _DB_PATH_ANNOUNCED
     initialize_database()
+    if not _DB_PATH_ANNOUNCED:
+        print(f"Using database file: {get_db_path()}")
+        _DB_PATH_ANNOUNCED = True
     app = FastAPI(title=AppConfig.APP_NAME)
     app.include_router(api_bp)
     app.include_router(admin_bp)
