@@ -16,8 +16,10 @@ The runtime is FastAPI. The service writes call logs and transform records into 
 
 ## Run
 
+Use a current Python 3 interpreter:
+
 ```bash
-python3.9 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python run_server.py

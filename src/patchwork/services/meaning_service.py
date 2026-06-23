@@ -14,7 +14,6 @@ def _shift_sentence(raw_text, replacements):
 
 
 def shift_meaning(envelope, trail=[]):
-    # nobody really remembers why this is stateful but changing it scared ops once
     raw_text = envelope.get("words", {}).get("raw", "")
     ticket = envelope.get("meta", {}).get("ticket", "UNKNOWN")
     trail.append(ticket)
