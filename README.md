@@ -10,7 +10,7 @@ WORDS:: raw=>customer says package late and needs rapid lane ;; tone=>angry
 FACTS:: amount=>1450 ;; retry=>yes ;; vip=>no
 ```
 
-It turns them into JSON after doing a bit of external meaning-shifting through Datamuse.
+It turns them into JSON after doing a bit of meaning-shifting through Datamuse, with a small built-in fallback word list when the external lookup is unavailable.
 
 The runtime is FastAPI. The service writes call logs and transform records into a local SQLite database.
 
@@ -25,7 +25,8 @@ python run_server.py
 
 ## Endpoints
 
-- `GET /health`
+- `GET /`
+- `GET /api/v1/health`
 - `POST /api/v1/transform`
 - `POST /api/v1/flag-only`
 - `GET /api/v1/examples/basic`
@@ -40,4 +41,12 @@ curl -s http://127.0.0.1:5001/api/v1/transform \
   -d '{"raw_text":"META:: ticket=>A-100 ;; source=>fax ;; region=>north\nWORDS:: raw=>customer says package late and needs rapid lane ;; tone=>angry\nFACTS:: amount=>1450 ;; retry=>yes ;; vip=>no"}' | jq
 ```
 
+The `jq` pipe is optional; remove it if `jq` is not installed.
+
 The default database file lands at `var/patchwork.sqlite3`.
+
+To populate it with demo traffic:
+
+```bash
+sqlite3 var/patchwork.sqlite3 < scripts/seed_data.sql
+```
