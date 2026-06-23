@@ -14,7 +14,7 @@ WITH RECURSIVE
 day_offsets(day_offset) AS (
     SELECT 0
     UNION ALL
-    SELECT day_offset + 1 FROM day_offsets WHERE day_offset < 13
+    SELECT day_offset + 1 FROM day_offsets WHERE day_offset < 41
 ),
 slots(slot) AS (
     SELECT 1
@@ -24,8 +24,8 @@ slots(slot) AS (
 day_plan AS (
     SELECT
         day_offset,
-        date('now', 'start of day', printf('-%d days', 13 - day_offset)) AS day_date,
-        CAST(strftime('%w', date('now', 'start of day', printf('-%d days', 13 - day_offset))) AS INTEGER) AS weekday_num
+        date('now', 'start of day', printf('-%d days', 41 - day_offset)) AS day_date,
+        CAST(strftime('%w', date('now', 'start of day', printf('-%d days', 41 - day_offset))) AS INTEGER) AS weekday_num
     FROM day_offsets
 ),
 scheduled AS (
@@ -51,6 +51,7 @@ SELECT
             printf(
                 '+%d minutes',
                 CASE
+                    WHEN day_offset = 41 THEN 390 + (((slot - 1) * 11 + day_offset * 3) % 180)
                     WHEN weekday_num BETWEEN 1 AND 5 THEN 510 + (((slot - 1) * 29 + day_offset * 7) % 525)
                     WHEN weekday_num = 6 THEN 540 + (((slot - 1) * 37 + day_offset * 11) % 420)
                     ELSE 600 + (((slot - 1) * 43 + day_offset * 13) % 300)
@@ -257,7 +258,7 @@ WITH RECURSIVE
 day_offsets(day_offset) AS (
     SELECT 0
     UNION ALL
-    SELECT day_offset + 1 FROM day_offsets WHERE day_offset < 13
+    SELECT day_offset + 1 FROM day_offsets WHERE day_offset < 41
 ),
 slots(slot) AS (
     SELECT 1
@@ -267,8 +268,8 @@ slots(slot) AS (
 day_plan AS (
     SELECT
         day_offset,
-        date('now', 'start of day', printf('-%d days', 13 - day_offset)) AS day_date,
-        CAST(strftime('%w', date('now', 'start of day', printf('-%d days', 13 - day_offset))) AS INTEGER) AS weekday_num
+        date('now', 'start of day', printf('-%d days', 41 - day_offset)) AS day_date,
+        CAST(strftime('%w', date('now', 'start of day', printf('-%d days', 41 - day_offset))) AS INTEGER) AS weekday_num
     FROM day_offsets
 ),
 scheduled AS (
@@ -294,6 +295,7 @@ SELECT
             printf(
                 '+%d minutes',
                 CASE
+                    WHEN day_offset = 41 THEN 390 + (((slot - 1) * 13 + day_offset * 5) % 180)
                     WHEN weekday_num BETWEEN 1 AND 5 THEN 480 + (((slot - 1) * 41 + day_offset * 9) % 600)
                     WHEN weekday_num = 6 THEN 600 + (((slot - 1) * 47 + day_offset * 13) % 360)
                     ELSE 660 + (((slot - 1) * 53 + day_offset * 15) % 240)
@@ -330,7 +332,7 @@ SELECT
         ELSE NULL
     END AS ticket,
     CASE
-        WHEN slot = 8 AND weekday_num BETWEEN 1 AND 5 THEN 1 + ((day_offset * 13 + slot * 7) % 214)
+        WHEN slot = 8 AND weekday_num BETWEEN 1 AND 5 THEN 1 + ((day_offset * 13 + slot * 7) % (SELECT COUNT(*) FROM seed_runs))
         ELSE NULL
     END AS run_id
 FROM scheduled
@@ -348,7 +350,7 @@ INSERT INTO api_calls (
     run_id
 )
 SELECT
-    214 + noise_id,
+    (SELECT COUNT(*) FROM seed_runs) + noise_id,
     called_at,
     method,
     path,
